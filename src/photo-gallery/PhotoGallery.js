@@ -1,36 +1,88 @@
-import React, { useState } from "react";
+import React, { Fragment, useState, useEffect } from "react";
+import styled from "styled-components";
+import GalleryImage from "../gallery-image";
+import { useSwipe } from "../utils/hooks";
 
-const PhotoGallery = ({ photos }) => {
+const Container = styled.div`
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  height: 100%;
+  justify-content: center;
+  align-items: center;
+`;
+
+const Arrow = styled.div`
+  height: 100%;
+  font-size: 2rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: ${({ disabled }) => (disabled ? "not-allowed" : "pointer")};
+  ${({ disabled }) => disabled && "color: red;"}
+`;
+
+const PhotoGallery = ({ photos, infiniteLoop }) => {
   const [focusedImage, setFocusedImage] = useState(0);
 
   const showLeftArrow = photos.length > 0 && focusedImage > 0;
   const showRightArrow = photos.length > 0 && focusedImage < photos.length - 1;
 
   const clickLeftArrow = () => {
-    setFocusedImage(focusedImage - 1);
+    if (infiniteLoop && !showLeftArrow) {
+      setFocusedImage(photos.length - 1);
+    } else {
+      showLeftArrow && setFocusedImage(focusedImage - 1);
+    }
   };
 
   const clickRightArrow = () => {
-    setFocusedImage(focusedImage + 1);
+    if (infiniteLoop && !showRightArrow) {
+      setFocusedImage(0);
+    } else {
+      showRightArrow && setFocusedImage(focusedImage + 1);
+    }
   };
 
-  console.log({ focusedImage });
-  console.log({ photos });
+  useEffect(() => {
+    const handleKeyDown = e => {
+      if (e.keyCode === 37) {
+        clickLeftArrow();
+      }
+      if (e.keyCode === 39) {
+        clickRightArrow();
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  });
+
+  useSwipe(clickLeftArrow, clickRightArrow);
 
   return (
-    <div>
-      {showLeftArrow && <div onClick={clickLeftArrow}>&#9664;</div>}
-      <img
-        key={photos[focusedImage].caption}
-        src={photos[focusedImage].url}
-        alt={photos[focusedImage].caption}
-      />
-      <figcaption>{photos[focusedImage].caption}</figcaption>
-      {/* {photos.map(photo => (
-        <img key={photo.caption} src={photo.url} alt={photo.caption} />
-      ))} */}
-      {showRightArrow && <div onClick={clickRightArrow}>&#9654;</div>}
-    </div>
+    <Container>
+      <Arrow
+        onClick={clickLeftArrow}
+        disabled={!showLeftArrow && !infiniteLoop}
+      >
+        &#9664;
+      </Arrow>
+      {!!photos[focusedImage] && (
+        <Fragment>
+          <GalleryImage {...photos[focusedImage]} />
+        </Fragment>
+      )}
+      <Arrow
+        onClick={clickRightArrow}
+        disabled={!showRightArrow && !infiniteLoop}
+      >
+        &#9654;
+      </Arrow>
+    </Container>
   );
 };
 
