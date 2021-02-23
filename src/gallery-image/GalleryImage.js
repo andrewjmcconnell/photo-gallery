@@ -8,16 +8,18 @@ const Image = styled.div`
   height: 500px;
   width: 500px;
   min-width: 70%;
+  min-height: 80%;
   display: flex;
   justify-content: center;
   align-items: center;
   margin: 5%;
+  box-shadow: 5px 5px 5px black;
 `;
 const Caption = styled.figcaption`
-    font-size: 30px;
-    font-weight: 700;
-    color: white;
-    text-shadow: 0 0 15px black;
+  font-size: 30px;
+  font-weight: 700;
+  color: white;
+  text-shadow: 0 0 15px black;
 `;
 
 const GalleryImage = ({ url, caption }) => (

@@ -1,7 +1,7 @@
 import React, { Fragment, useState, useEffect } from "react";
 import styled from "styled-components";
 import GalleryImage from "../gallery-image";
-import { useSwipe } from "../utils/hooks";
+import { usePreloadedImages, useSwipe } from "../utils/hooks";
 
 const Container = styled.div`
   display: flex;
@@ -20,9 +20,15 @@ const Arrow = styled.div`
   align-items: center;
   cursor: ${({ disabled }) => (disabled ? "not-allowed" : "pointer")};
   ${({ disabled }) => disabled && "color: red;"}
+
+  &:hover {
+    transform: scale(1.5, 1.5) translate(0, 0);
+  }
 `;
 
 const PhotoGallery = ({ photos, infiniteLoop }) => {
+  usePreloadedImages(photos)
+
   const [focusedImage, setFocusedImage] = useState(0);
 
   const showLeftArrow = photos.length > 0 && focusedImage > 0;

@@ -1,6 +1,6 @@
 import "./App.css";
 import { useState } from "react";
-import { createGlobalStyle } from "styled-components";
+import styled, { createGlobalStyle } from "styled-components";
 
 import PhotoGallery from "./photo-gallery";
 
@@ -16,6 +16,11 @@ const GlobalStyle = createGlobalStyle`
   }
 `;
 
+const ConfigContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+`;
+
 const photos = [
   {
     url:
@@ -25,7 +30,7 @@ const photos = [
   {
     url:
       "https://static.boredpanda.com/blog/wp-content/uploads/2017/12/funny-weird-wtf-stock-photos-54-5a3bb0a19c729__700.jpg",
-    caption: "Cat flowers"
+    caption: "Prom night"
   },
   {
     url:
@@ -53,10 +58,10 @@ const Checkbox = props => <input type="checkbox" {...props} />;
 
 const App = () => {
   const [infiniteLoop, setInfiniteLoop] = useState(false);
-  return (
-    <div className="App">
-      <GlobalStyle />
-      <div>By Andrew McConnell</div>
+  const [noPhotos, setNoPhotos] = useState(false);
+
+  const Config = () => (
+    <ConfigContainer>
       <label>
         <Checkbox
           checked={infiniteLoop}
@@ -64,7 +69,23 @@ const App = () => {
         />
         Allow infinite loop
       </label>
-      <PhotoGallery photos={photos} infiniteLoop={infiniteLoop} />
+      <label>
+        <Checkbox
+          checked={noPhotos}
+          onChange={e => setNoPhotos(e.target.checked)}
+        />
+        Empty list of photos
+      </label>
+    </ConfigContainer>
+  );
+
+  return (
+    <div className="App">
+      <GlobalStyle />
+      <div>PhotoGallery</div>
+      <div>By Andrew McConnell</div>
+      <Config />
+      <PhotoGallery photos={!noPhotos && photos} infiniteLoop={infiniteLoop} />
     </div>
   );
 };

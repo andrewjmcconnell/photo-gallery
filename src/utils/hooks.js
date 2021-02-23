@@ -1,5 +1,16 @@
 import { useEffect } from "react";
 
+// preload images when mounted
+export function usePreloadedImages(imgs) {
+  useEffect(() => {
+    if (imgs.length > 0) {
+      imgs.forEach(img => {
+        const image = new Image();
+        image.src = img.url;
+      });
+    }
+  });
+}
 
 // on mobile, handle swipe functions
 // if the user swipes a finger left-to-right, run swipeLeftFn
